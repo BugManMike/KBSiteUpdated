@@ -1,0 +1,36 @@
+/* OKF frontmatter rendering — pills for type and tags. */
+
+.okf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: -.4rem 0 1.2rem;
+}
+
+.okf-pill {
+  display: inline-block;
+  padding: .12rem .5rem;
+  border-radius: 1rem;
+  font-size: .64rem;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.okf-type {
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+
+.okf-tag {
+  background: var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color--light);
+  font-weight: 500;
+}
+
+/* Tables in this corpus are mostly narrow lookup tables; let them breathe
+   rather than stretching to full width. */
+.md-typeset table:not([class]) {
+  font-size: .72rem;
+}
