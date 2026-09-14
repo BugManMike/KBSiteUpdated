@@ -1,0 +1,81 @@
+name: Docs
+
+# Verifies the bundle on every change, and publishes the site from main.
+#
+# The verify job is the useful half and runs everywhere. The deploy job is
+# commented out until the hosting decision is made — see docs-site-setup.md.
+# Do not enable it while the repo is public: this bundle is internal.
+
+on:
+  push:
+    branches: [main, wiki-ingestion]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify bundle and build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements-docs.txt
+
+      # The bundle contract: frontmatter completeness, type vocabulary,
+      # bundle-relative link resolution, index.md presence.
+      # Closes the "wire check-bundle.py into CI" item in PROJECT-TODO.md.
+      - name: Check bundle
+        run: python scripts/check-bundle.py
+
+      # strict:true in mkdocs.yml means any unresolvable link fails here.
+      # This is a second, independent check on the same corpus.
+      - name: Build site
+        run: mkdocs build --strict
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site/
+          retention-days: 14
+
+  # ---------------------------------------------------------------------
+  # Enable only once hosting is settled AND the repo's visibility is
+  # confirmed. GitHub Pages on a private repo requires GitHub Enterprise
+  # Cloud; on a free or Team plan, enabling Pages makes the site PUBLIC
+  # regardless of repo visibility.
+  # ---------------------------------------------------------------------
+  #
+  # deploy:
+  #   name: Deploy to GitHub Pages
+  #   needs: verify
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.12"
+  #         cache: pip
+  #     - run: pip install -r requirements-docs.txt
+  #     - run: mkdocs build --strict
+  #     - uses: actions/configure-pages@v5
+  #     - uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: site/
+  #     - id: deployment
+  #       uses: actions/deploy-pages@v4

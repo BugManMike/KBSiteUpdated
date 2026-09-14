@@ -1,0 +1,73 @@
+site_name: Natran Knowledge Base
+site_description: Internal knowledge base for Natran Green Pest Control — an OKF v0.2 bundle.
+docs_dir: docs
+
+# Set these when the repo location is confirmed.
+# site_url: https://<org>.github.io/natran-knowledge-base/
+# repo_url: https://github.com/<org>/natran-knowledge-base
+# edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - toc:
+      permalink: true
+
+# Rewrites the bundle's absolute /dir/file.md links into working site links,
+# and renders the OKF frontmatter (title, type, status, tags) on each page.
+# The source files are never modified — the OKF contract stays exactly as written.
+hooks:
+  - hooks/okf.py
+
+extra_css:
+  - assets/okf.css
+
+# Navigation is generated from the folder tree, so new batches appear
+# automatically with no nav edits. Order follows each directory's contents.
+
+# Fail the build on a broken internal link. Keep this on — it is what makes
+# the site a second check on the bundle alongside scripts/check-bundle.py.
+strict: true
